@@ -17,19 +17,24 @@ components:
                     type: array
         SiteStructurePage:
             description:
-                Represents site pages structure..
+                Represents site pages structure.
             properties:
+                parentUrl:
+                    description: The content set parent element's id.
+                    readOnly: true
+                    type: string
                 page:
                     description: The page's name.
                     readOnly: true
                     type: string
+
                 siteId:
                     description:
                         The site's id.
                     format: int64
                     readOnly: true
                     type: integer
-                friendlyUrlPath:
+                url:
                     description:
                         The content set element's id.
                     readOnly: true
@@ -84,7 +89,6 @@ components:
                 definition:
                     description: The page element's definition.
                     oneOf:
-                        - $ref: "#/components/schemas/PageColumnDefinition"
                         - $ref: "#/components/schemas/PageRootDefinition"
                         - $ref: "#/components/schemas/PageSectionDefinition"
                         - $ref: "#/components/schemas/PageWidgetInstanceDefinition"
@@ -244,4 +248,4 @@ paths:
                         application/xml:
                             schema:
                                 $ref: "#/components/schemas/SiteStructurePage"
-            tags: ["SiteStructure"]
+            tags: ["SiteStructure"]        
