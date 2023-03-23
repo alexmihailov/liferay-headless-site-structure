@@ -1,0 +1,6 @@
+Bundle-Name: liferay-headless-site-structure-api
+Bundle-SymbolicName: ru.tele2.liferay.headless.api
+Bundle-Version: 1.0.0
+Export-Package:\
+	ru.tele2.liferay.headless.dto.v1_0,\
+	ru.tele2.liferay.headless.resource.v1_0

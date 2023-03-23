@@ -1,0 +1,3 @@
+Bundle-Name: liferay-headless-site-structure-impl
+Bundle-SymbolicName: ru.tele2.liferay.headless.impl
+Bundle-Version: 1.0.0

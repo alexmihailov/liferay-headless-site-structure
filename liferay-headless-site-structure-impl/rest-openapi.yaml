@@ -1,0 +1,247 @@
+components:
+    schemas:
+        SiteStructure:
+            description:
+                Represents site structure.
+            properties:
+                siteId:
+                    description:
+                        The site's id.
+                    format: int64
+                    readOnly: true
+                    type: integer
+                pages:
+                    readOnly: true
+                    items:
+                        $ref: "#/components/schemas/SiteStructurePage"
+                    type: array
+        SiteStructurePage:
+            description:
+                Represents site pages structure..
+            properties:
+                page:
+                    description: The page's name.
+                    readOnly: true
+                    type: string
+                siteId:
+                    description:
+                        The site's id.
+                    format: int64
+                    readOnly: true
+                    type: integer
+                friendlyUrlPath:
+                    description:
+                        The content set element's id.
+                    readOnly: true
+                    type: string
+                items:
+                    readOnly: true
+                    items:
+                        $ref: "#/components/schemas/SiteStructurePageItem"
+                    type: array
+        SiteStructurePageItem:
+            description:
+                Represents each member of a content set and can contain different types of assets.
+            properties:
+                experience:
+                    description:
+                        The experience's.
+                    readOnly: true
+                    $ref: "#/components/schemas/Experience"
+                pageDefinition:
+                    readOnly: true
+                    $ref: "#/components/schemas/PageDefinition"
+        Experience:
+            description:
+                Represents a customized experience for a given page.
+            properties:
+                key:
+                    readOnly: true
+                    type: string
+                name:
+                    description: The experience's name.
+                    readOnly: true
+                    type: string
+                segments:
+                    description: A list of segments the experience is used for.
+                    type: array
+                    items:
+                        type: string
+
+        PageDefinition:
+            description:
+                Represent a definition of a Page.
+            properties:
+                pageElement:
+                    allOf:
+                        - $ref: "#/components/schemas/PageElement"
+                    description:
+                        The page's page element.
+
+        PageElement:
+            description: Represents a Page element.
+            properties:
+                definition:
+                    description: The page element's definition.
+                    oneOf:
+                        - $ref: "#/components/schemas/PageColumnDefinition"
+                        - $ref: "#/components/schemas/PageRootDefinition"
+                        - $ref: "#/components/schemas/PageSectionDefinition"
+                        - $ref: "#/components/schemas/PageWidgetInstanceDefinition"
+                pageElements:
+                    description: A list of the page elements this page element has.
+                    items:
+                        $ref: "#/components/schemas/PageElement"
+                    type: array
+                segments:
+                    description:
+                        A list of segments.
+                    readOnly: true
+                    type: array
+                    items:
+                        type: string
+                name:
+                    description: Name element.
+                    readOnly: true
+                    type: string
+                type:
+                    description: The page element's type (collection, collection item, column, drop zone, form, fragment, fragment drop zone, root, row, section or widget).
+                    enum: [Collection, CollectionItem, Root, Section, Widget]
+                    type: string
+
+        PageRootDefinition:
+            description: Represents a definition of a Root Page.
+            type: object
+
+        PageSectionDefinition:
+            description:
+                Represents a definition of a Page section.
+            properties:
+                name:
+                    description: The custom name of a Page section.
+                    type: string
+            type: object
+
+        PageWidgetInstanceDefinition:
+            description:
+                Represents a definition of a Page Widget instance.
+            properties:
+                widgetInstance:
+                    allOf:
+                        - $ref: "#/components/schemas/WidgetInstance"
+                    description:
+                        The widget instance of the page widget instance.
+            type: object
+
+        WidgetInstance:
+            description:
+                Represents a Widget Instance.
+            properties:
+                articleId:
+                    description:
+                        The widget's id.
+                    type: string
+                name:
+                    description:
+                        The widget instance's name.
+                    type: string
+                contentFields:
+                    description:
+                        The list of content fields the document type has.
+                    items:
+                        $ref: "#/components/schemas/ContentField"
+                    type: array
+
+        ContentField:
+            description:
+                Represents the value of each field in structured content.
+            properties:
+                contentFieldValue:
+                    allOf:
+                        - $ref: "#/components/schemas/ContentFieldValue"
+                    description:
+                        The field's value.
+                dataType:
+                    description:
+                        The field type (e.g., text, etc.).
+                    readOnly: true
+                    type: string
+                label:
+                    description:
+                        The field's label.
+                    readOnly: true
+                    type: string
+                name:
+                    description:
+                        The field's internal name. This is valid for comparisons and unique in the structured content.
+                    type: string
+
+        ContentFieldValue:
+            description:
+                Represents the value of a content field. Can contain different information types (e.g., geolocation,
+                documents, etc.).
+            properties:
+                data:
+                    description:
+                        The field's content for simple types.
+                    type: string
+                widgetInstance:
+                    allOf:
+                        - $ref: "#/components/schemas/WidgetInstance"
+                    description: The widget instance of the page widget instance.
+
+info:
+    description: "Tele2 Headless Admin Site Structure"
+    license:
+        name: "Apache 2.0"
+        url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+    title: "Headless API for Site Structure"
+    version: v1.0
+openapi: 3.0.1
+paths:
+    "/headless-site-structure/{siteId}/pages":
+        get:
+            operationId: getSiteStructure
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/SiteStructure"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/SiteStructure"
+            tags: ["SiteStructure"]
+
+    "/headless-site-structure/{siteId}/pages/{friendlyUrlPath}":
+        get:
+            operationId: getSiteStructurePage
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: path
+                  name: friendlyUrlPath
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/SiteStructurePage"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/SiteStructurePage"
+            tags: ["SiteStructure"]

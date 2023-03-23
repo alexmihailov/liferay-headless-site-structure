@@ -1,0 +1,9 @@
+dependencies {
+	compile project(":modules:liferay-headless-site-structure:liferay-headless-site-structure-api")
+
+	compileOnly group: "com.liferay.portal", name: "release.portal.api"
+
+	restBuilder group: "com.liferay", name: "com.liferay.portal.tools.rest.builder", version: "1.0.222"
+}
+
+group = "ru.tele2.liferay.headless"

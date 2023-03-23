@@ -1,0 +1,11 @@
+apiDir: "../liferay-headless-site-structure-api/src/main/java"
+apiPackagePath: "ru.tele2.liferay.headless"
+application:
+    baseURI: "/liferay-headless-site-structure"
+    className: "LiferayHeadlessSiteStructureApplication"
+    name: "LiferayHeadlessSiteStructure"
+author: "atyutin"
+forcePredictableOperationId: false
+forcePredictableSchemaPropertyName: false
+generateBatch: false
+generateGraphQL: false
