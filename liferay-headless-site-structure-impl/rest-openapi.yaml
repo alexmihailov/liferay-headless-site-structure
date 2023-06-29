@@ -213,6 +213,12 @@ paths:
                   schema:
                       format: int64
                       type: integer
+                - in: query
+                  name: publicationId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
             responses:
                 200:
                     content:

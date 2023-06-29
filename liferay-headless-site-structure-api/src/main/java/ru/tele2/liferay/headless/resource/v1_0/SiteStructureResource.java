@@ -40,7 +40,8 @@ import ru.tele2.liferay.headless.dto.v1_0.SiteStructurePage;
 @ProviderType
 public interface SiteStructureResource {
 
-	public SiteStructure getSiteStructure(Long siteId) throws Exception;
+	public SiteStructure getSiteStructure(Long siteId, Long publicationId)
+		throws Exception;
 
 	public SiteStructurePage getSiteStructurePage(
 			Long siteId, String friendlyUrlPath)

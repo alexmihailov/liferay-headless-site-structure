@@ -32,7 +32,6 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Generated("")
 @GraphQLName(
-	description = "Represents site pages structure..",
 	description = "Represents site pages structure.",
 	value = "SiteStructurePage"
 )
@@ -47,34 +46,6 @@ public class SiteStructurePage implements Serializable {
 	public static SiteStructurePage unsafeToDTO(String json) {
 		return ObjectMapperUtil.unsafeReadValue(SiteStructurePage.class, json);
 	}
-
-	@Schema(description = "The content set element's id.")
-	public String getFriendlyUrlPath() {
-		return friendlyUrlPath;
-	}
-
-	public void setFriendlyUrlPath(String friendlyUrlPath) {
-		this.friendlyUrlPath = friendlyUrlPath;
-	}
-
-	@JsonIgnore
-	public void setFriendlyUrlPath(
-		UnsafeSupplier<String, Exception> friendlyUrlPathUnsafeSupplier) {
-
-		try {
-			friendlyUrlPath = friendlyUrlPathUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@GraphQLField(description = "The content set element's id.")
-	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
-	protected String friendlyUrlPath;
 
 	@Schema
 	@Valid
@@ -240,20 +211,6 @@ public class SiteStructurePage implements Serializable {
 		StringBundler sb = new StringBundler();
 
 		sb.append("{");
-
-		if (friendlyUrlPath != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"friendlyUrlPath\": ");
-
-			sb.append("\"");
-
-			sb.append(_escape(friendlyUrlPath));
-
-			sb.append("\"");
-		}
 
 		if (items != null) {
 			if (sb.length() > 1) {

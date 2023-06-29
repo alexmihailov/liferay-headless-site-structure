@@ -30,6 +30,7 @@ import ru.tele2.liferay.headless.dto.v1_0.Experience;
 import ru.tele2.liferay.headless.dto.v1_0.SiteStructurePageItem;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Set;
 
 import static com.liferay.segments.constants.SegmentsExperienceConstants.KEY_DEFAULT;
@@ -64,7 +65,7 @@ public class SiteStructurePageItemDTOConverter implements DTOConverter<Layout, S
 						SegmentsEntry segmentsEntry = !KEY_DEFAULT.equals(segmentsExperience.getSegmentsExperienceKey()) ?
 							_segmentsEntryService.getSegmentsEntry(segmentsExperience.getSegmentsEntryId()) : null;
 
-						Set<String> _segments = segmentsEntry != null ? Set.of(segmentsEntry.getName(dtoConverterContext.getLocale())) : Set.of();
+						Set<String> _segments = segmentsEntry != null ? Collections.singleton(segmentsEntry.getName(dtoConverterContext.getLocale())) : Collections.emptySet();
 						dtoConverterContext.setAttribute(SEGMENTS, _segments);
 						return new Experience() {{
 							key = segmentsExperience.getSegmentsExperienceKey();

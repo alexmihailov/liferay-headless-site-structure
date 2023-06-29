@@ -2,7 +2,9 @@ package ru.tele2.liferay.headless.internal.resource.v1_0;
 
 import com.liferay.friendly.url.model.FriendlyURLEntryLocalization;
 import com.liferay.friendly.url.service.FriendlyURLEntryLocalService;
+import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.change.tracking.CTCollectionThreadLocal;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.search.Field;
@@ -63,18 +65,20 @@ public class SiteStructureResourceImpl extends BaseSiteStructureResourceImpl {
     private Portal _portal;
 
     @Override
-    public SiteStructure getSiteStructure(Long siteId) throws Exception {
-        return SearchUtil.search(
-            siteId,
-            searchContext -> {
-                searchContext.setCompanyId(contextCompany.getCompanyId());
-                searchContext.setGroupIds(new long[]{siteId});
-            },
-            document -> {
-                long plid = GetterUtil.getLong(document.get(Field.ENTRY_CLASS_PK));
-                Layout layout = _layoutLocalService.getLayout(plid);
-                return _getSiteStructurePage(layout);
-            });
+    public SiteStructure getSiteStructure(Long siteId, Long publicationId) throws Exception {
+        try (SafeCloseable safeCloseable = CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(publicationId)) {
+            return SearchUtil.search(
+                    siteId,
+                    searchContext -> {
+                        searchContext.setCompanyId(contextCompany.getCompanyId());
+                        searchContext.setGroupIds(new long[]{siteId});
+                    },
+                    document -> {
+                        long plid = GetterUtil.getLong(document.get(Field.ENTRY_CLASS_PK));
+                        Layout layout = _layoutLocalService.getLayout(plid);
+                        return _getSiteStructurePage(layout);
+                    });
+        }
     }
 
     @Override
@@ -110,12 +114,10 @@ public class SiteStructureResourceImpl extends BaseSiteStructureResourceImpl {
         throws Exception {
 
         String resourceName = ResourceActionsUtil.getCompositeModelName(Layout.class.getName(), "false");
-
         FriendlyURLEntryLocalization friendlyURLEntryLocalization =
             _friendlyURLEntryLocalService.getFriendlyURLEntryLocalization(
                 groupId, _portal.getClassNameId(resourceName),
                 StringPool.FORWARD_SLASH + friendlyUrlPath);
-
         return _layoutLocalService.getLayout(friendlyURLEntryLocalization.getClassPK());
     }
 
@@ -127,8 +129,7 @@ public class SiteStructureResourceImpl extends BaseSiteStructureResourceImpl {
         }
 
         return _segmentsExperienceLocalService.getSegmentsExperiences(
-            layout.getGroupId(), _portal.getClassNameId(Layout.class.getName()),
-            layout.getPlid(), true);
+            layout.getGroupId(), layout.getPlid(), true);
     }
 
     private SiteStructurePageItem _toSiteStructurePageItem(Layout layout, String segmentsExperienceKey) throws Exception {
@@ -150,7 +151,6 @@ public class SiteStructureResourceImpl extends BaseSiteStructureResourceImpl {
         throws Exception {
 
         return _segmentsExperienceService.fetchSegmentsExperience(
-            layout.getGroupId(), segmentsExperienceKey,
-            _portal.getClassNameId(Layout.class), layout.getPlid());
+            layout.getGroupId(), segmentsExperienceKey, layout.getPlid());
     }
 }
