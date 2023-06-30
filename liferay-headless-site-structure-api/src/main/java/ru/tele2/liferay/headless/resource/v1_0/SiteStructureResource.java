@@ -44,7 +44,7 @@ public interface SiteStructureResource {
 		throws Exception;
 
 	public SiteStructurePage getSiteStructurePage(
-			Long siteId, String friendlyUrlPath)
+			Long siteId, String friendlyUrlPath, Long publicationId)
 		throws Exception;
 
 	public default void setContextAcceptLanguage(

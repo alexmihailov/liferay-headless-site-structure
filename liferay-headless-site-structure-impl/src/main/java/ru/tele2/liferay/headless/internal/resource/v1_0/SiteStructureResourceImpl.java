@@ -30,6 +30,7 @@ import ru.tele2.liferay.headless.resource.v1_0.SiteStructureResource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.liferay.portal.kernel.util.GetterUtil.DEFAULT_LONG;
 import static ru.tele2.liferay.headless.internal.dto.v1_0.converter.SiteStructurePageItemDTOConverter.SEGMENTS_EXPERIENCE;
@@ -67,24 +68,38 @@ public class SiteStructureResourceImpl extends BaseSiteStructureResourceImpl {
     @Override
     public SiteStructure getSiteStructure(Long siteId, Long publicationId) throws Exception {
         try (SafeCloseable safeCloseable = CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(publicationId)) {
-            return SearchUtil.search(
-                    siteId,
-                    searchContext -> {
-                        searchContext.setCompanyId(contextCompany.getCompanyId());
-                        searchContext.setGroupIds(new long[]{siteId});
-                    },
-                    document -> {
-                        long plid = GetterUtil.getLong(document.get(Field.ENTRY_CLASS_PK));
-                        Layout layout = _layoutLocalService.getLayout(plid);
-                        return _getSiteStructurePage(layout);
-                    });
+            List<SiteStructurePage> pages = _layoutLocalService.getLayouts(siteId, false).stream().map(layout -> {
+                try {
+                    return _getSiteStructurePage(layout);
+                } catch (PortalException e) {
+                    throw new RuntimeException(e);
+                }
+            }).collect(Collectors.toList());
+            SiteStructure result = new SiteStructure();
+            result.setSiteId(siteId);
+            result.setPages(pages.toArray(new SiteStructurePage[0]));
+            return result;
+
+//            return SearchUtil.search(
+//                    siteId,
+//                    searchContext -> {
+//                        searchContext.setCompanyId(contextCompany.getCompanyId());
+//                        searchContext.setGroupIds(new long[]{siteId});
+//                    },
+//                    document -> {
+//                        long plid = GetterUtil.getLong(document.get(Field.ENTRY_CLASS_PK));
+//                        Layout layout = _layoutLocalService.getLayout(plid);
+//                        return _getSiteStructurePage(layout);
+//                    });
         }
     }
 
     @Override
-    public SiteStructurePage getSiteStructurePage(Long siteId, String friendlyUrlPath) throws Exception {
-        Layout layout = _getLayout(siteId, friendlyUrlPath);
-        return _getSiteStructurePage(layout);
+    public SiteStructurePage getSiteStructurePage(Long siteId, String friendlyUrlPath, Long publicationId) throws Exception {
+        try (SafeCloseable safeCloseable = CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(publicationId)) {
+            Layout layout = _getLayout(siteId, friendlyUrlPath);
+            return _getSiteStructurePage(layout);
+        }
     }
 
     private SiteStructurePage _getSiteStructurePage(Layout layout) throws PortalException {
